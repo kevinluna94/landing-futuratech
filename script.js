@@ -1,6 +1,6 @@
 const scriptURL = "https://script.google.com/macros/s/AKfycbyVf3RCYsJZnL_VXF5FnWKsRS8x7b0N9TTtTsR2DVlyAej1vfu_OGu4ex6CvTuRBLDF/exec";
 
-document.getElementById("miFormulario").addEventListener("submit", async (e) => {
+document.getElementById("miFormulario").addEventListener("submit", function(e) {
   e.preventDefault();
   const form = e.target;
 
@@ -18,19 +18,25 @@ document.getElementById("miFormulario").addEventListener("submit", async (e) => 
     consentimiento: form.consentimiento.checked ? "Sí" : "No"
   };
 
-  try {
-    const response = await fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" }
-    });
-
-    const result = await response.json();
+  fetch(scriptURL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
     const mensaje = document.getElementById("mensaje");
-    mensaje.innerText = "✅ " + result.result;
+    mensaje.innerText = "✅ Datos enviados correctamente";
     mensaje.style.display = "block";
+    mensaje.style.color = "#00ff00";
     form.reset();
-  } catch (error) {
-    document.getElementById("mensaje").innerText = "❌ Error: " + error;
-  }
+  })
+  .catch((err) => {
+    const mensaje = document.getElementById("mensaje");
+    mensaje.innerText = "❌ Error al enviar: " + err;
+    mensaje.style.display = "block";
+    mensaje.style.color = "#ff4444";
+  });
 });
